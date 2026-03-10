@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>R.Lynx™ RestFast — Manager</title>
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/manager.css">
+</head>
+<body>
+
+<div id="manager-app">
+
+  <!-- ═══ SIDEBAR ═══ -->
+  <nav id="manager-sidebar">
+
+    <div class="sidebar-logo">
+      <div class="sidebar-logo-inner">
+        <div class="logo-mark">RL</div>
+        <div class="app-name">
+          RestFast
+          <small>Manager</small>
+        </div>
+      </div>
+    </div>
+
+    <div class="sidebar-section">
+      <div class="sidebar-section-label">Principale</div>
+      <div class="nav-item active" data-page="dashboard">
+        <span class="nav-icon">📊</span>
+        <span class="nav-label">Tableau de Bord</span>
+      </div>
+      <div class="nav-item" data-page="orders">
+        <span class="nav-icon">🧾</span>
+        <span class="nav-label">Commandes</span>
+      </div>
+      <div class="nav-item" data-page="tables">
+        <span class="nav-icon">🪑</span>
+        <span class="nav-label">Tables</span>
+      </div>
+    </div>
+
+    <div class="sidebar-section">
+      <div class="sidebar-section-label">Catalogue</div>
+      <div class="nav-item" data-page="items">
+        <span class="nav-icon">🍽</span>
+        <span class="nav-label">Articles</span>
+      </div>
+      <div class="nav-item" data-page="categories">
+        <span class="nav-icon">📂</span>
+        <span class="nav-label">Catégories</span>
+      </div>
+    </div>
+
+    <div class="sidebar-section">
+      <div class="sidebar-section-label">Gestion</div>
+      <div class="nav-item" data-page="reports">
+        <span class="nav-icon">📈</span>
+        <span class="nav-label">Rapports</span>
+      </div>
+      <div class="nav-item" data-page="users">
+        <span class="nav-icon">👥</span>
+        <span class="nav-label">Utilisateurs</span>
+      </div>
+      <div class="nav-item" data-page="settings">
+        <span class="nav-icon">⚙</span>
+        <span class="nav-label">Paramètres</span>
+      </div>
+    </div>
+
+    <div class="sidebar-footer">
+      <button class="btn btn-primary w-full btn-sm" id="btn-launch-pos" style="margin-bottom:10px">
+        🖥 Ouvrir PDV
+      </button>
+      <button class="btn btn-ghost w-full btn-sm" id="btn-logout-mgr">
+        ⏏ Déconnexion
+      </button>
+    </div>
+
+  </nav>
+
+  <!-- ═══ MAIN CONTENT ═══ -->
+  <div id="manager-main">
+
+    <!-- Dynamic page header -->
+    <div class="page-header">
+      <div>
+        <div class="page-title">
+          <span id="page-header-icon">📊</span>
+          <span id="page-header-title">Tableau de Bord</span>
+        </div>
+      </div>
+      <!-- Page action buttons (injected by JS) -->
+      <div id="page-actions"></div>
+    </div>
+
+    <!-- ═══ DASHBOARD ═══ -->
+    <div class="page-body active" id="page-dashboard">
+
+      <!-- Stats row -->
+      <div class="stats-grid">
+        <div class="stat-card amber">
+          <div class="stat-icon">💰</div>
+          <div class="stat-value" id="stat-revenue">—</div>
+          <div class="stat-label">Chiffre d'affaires</div>
+          <div class="stat-change up" id="stat-rev-change">Aujourd'hui</div>
+        </div>
+        <div class="stat-card green">
+          <div class="stat-icon">🧾</div>
+          <div class="stat-value" id="stat-orders">—</div>
+          <div class="stat-label">Commandes</div>
+          <div class="stat-change up">Ce jour</div>
+        </div>
+        <div class="stat-card blue">
+          <div class="stat-icon">🎫</div>
+          <div class="stat-value" id="stat-avg">—</div>
+          <div class="stat-label">Ticket moyen</div>
+          <div class="stat-change up">Par commande</div>
+        </div>
+        <div class="stat-card red">
+          <div class="stat-icon">⏳</div>
+          <div class="stat-value" id="stat-open">—</div>
+          <div class="stat-label">En cours</div>
+          <div class="stat-change">Tables actives</div>
+        </div>
+      </div>
+
+      <!-- Charts -->
+      <div class="charts-grid">
+        <div class="chart-card">
+          <div class="chart-title">
+            <span>Ventes 7 derniers jours</span>
+            <span style="font-size:0.75rem;color:var(--text-muted);font-family:var(--font-mono)">DZD</span>
+          </div>
+          <div class="bar-chart" id="weekly-chart"></div>
+        </div>
+        <div class="chart-card">
+          <div class="chart-title">Articles les plus vendus</div>
+          <div class="donut-chart-wrap">
+            <div id="donut-svg"></div>
+            <div class="donut-legend" id="top-items-legend"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Recent orders -->
+      <div class="data-table-wrap">
+        <div class="data-table-header">
+          <div class="data-table-title">Dernières commandes</div>
+          <button class="btn btn-ghost btn-sm" onclick="navigateTo('orders')">Voir tout →</button>
+        </div>
+        <table>
+          <thead>
+            <tr>
+              <th>N°</th>
+              <th>Table</th>
+              <th>Articles</th>
+              <th>Total</th>
+              <th>Paiement</th>
+              <th>Heure</th>
+            </tr>
+          </thead>
+          <tbody id="recent-orders-body"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- ═══ ORDERS ═══ -->
+    <div class="page-body" id="page-orders">
+      <div class="data-table-wrap">
+        <div class="data-table-header">
+          <div class="data-table-title">Toutes les commandes</div>
+        </div>
+        <table>
+          <thead>
+            <tr><th>N°</th><th>Table</th><th>Articles</th><th>Total</th><th>Statut</th><th>Paiement</th><th>Date</th></tr>
+          </thead>
+          <tbody id="orders-body"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- ═══ ITEMS ═══ -->
+    <div class="page-body" id="page-items">
+      <div style="display:flex;justify-content:flex-end;margin-bottom:16px">
+        <button class="btn btn-primary" onclick="openAddItemModal()">+ Nouvel Article</button>
+      </div>
+      <div class="items-manager-grid" id="items-manager-grid"></div>
+    </div>
+
+    <!-- ═══ CATEGORIES ═══ -->
+    <div class="page-body" id="page-categories">
+      <div style="display:flex;justify-content:flex-end;margin-bottom:16px">
+        <button class="btn btn-primary" onclick="openAddCategoryModal()">+ Nouvelle Catégorie</button>
+      </div>
+      <div class="data-table-wrap">
+        <table>
+          <thead>
+            <tr><th>Icône</th><th>Nom</th><th>Articles</th><th>Couleur</th><th>Actions</th></tr>
+          </thead>
+          <tbody id="cats-body"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- ═══ TABLES ═══ -->
+    <div class="page-body" id="page-tables">
+      <div class="data-table-wrap">
+        <table>
+          <thead>
+            <tr><th>Table</th><th>Capacité</th><th>Statut</th><th>Commande</th><th>Actions</th></tr>
+          </thead>
+          <tbody id="tables-body"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- ═══ REPORTS ═══ -->
+    <div class="page-body" id="page-reports">
+      <!-- Toolbar -->
+      <div class="report-toolbar">
+        <div class="form-group" style="margin:0;flex-direction:row;align-items:center;gap:8px">
+          <label class="form-label" style="white-space:nowrap">Du</label>
+          <input type="date" class="input" id="report-from" style="width:160px">
+        </div>
+        <div class="form-group" style="margin:0;flex-direction:row;align-items:center;gap:8px">
+          <label class="form-label" style="white-space:nowrap">Au</label>
+          <input type="date" class="input" id="report-to" style="width:160px">
+        </div>
+        <button class="btn btn-primary" onclick="loadReport()">📊 Générer</button>
+      </div>
+
+      <!-- Summary stats -->
+      <div class="stats-grid" style="grid-template-columns:repeat(3,1fr);margin-bottom:20px">
+        <div class="stat-card amber">
+          <div class="stat-icon">💰</div>
+          <div class="stat-value" id="rep-revenue">—</div>
+          <div class="stat-label">Chiffre d'affaires</div>
+        </div>
+        <div class="stat-card green">
+          <div class="stat-icon">🧾</div>
+          <div class="stat-value" id="rep-count">—</div>
+          <div class="stat-label">Commandes</div>
+        </div>
+        <div class="stat-card blue">
+          <div class="stat-icon">🎫</div>
+          <div class="stat-value" id="rep-avg">—</div>
+          <div class="stat-label">Ticket moyen</div>
+        </div>
+      </div>
+
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
+        <!-- Payment breakdown -->
+        <div class="chart-card">
+          <div class="chart-title">Répartition par mode de paiement</div>
+          <div id="rep-pay-breakdown"></div>
+        </div>
+        <!-- Top items -->
+        <div class="data-table-wrap">
+          <div class="data-table-header">
+            <div class="data-table-title">Meilleures ventes</div>
+          </div>
+          <table>
+            <thead><tr><th>Article</th><th>Quantité</th><th>CA</th></tr></thead>
+            <tbody id="rep-items-body"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══ USERS ═══ -->
+    <div class="page-body" id="page-users">
+      <div style="display:flex;justify-content:flex-end;margin-bottom:16px">
+        <button class="btn btn-primary" onclick="openAddUserModal()">+ Nouvel Utilisateur</button>
+      </div>
+      <div class="data-table-wrap">
+        <table>
+          <thead>
+            <tr><th>Nom</th><th>Identifiant</th><th>Rôle</th><th>Statut</th><th>Actions</th></tr>
+          </thead>
+          <tbody id="users-body"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- ═══ SETTINGS ═══ -->
+    <div class="page-body" id="page-settings">
+      <div style="max-width:600px">
+
+        <div class="data-table-wrap" style="padding:24px;border-radius:var(--radius-lg);margin-bottom:20px">
+          <h3 style="font-family:var(--font-display);font-size:1rem;font-weight:700;margin-bottom:20px;color:var(--text-primary)">
+            🏪 Informations du Restaurant
+          </h3>
+          <div class="form-group">
+            <label class="form-label">Nom du restaurant</label>
+            <input class="input" id="set-resto-name" placeholder="R.Lynx™ RestFast">
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label">Devise</label>
+              <select class="input" id="set-currency">
+                <option value="DZD">DZD — Dinar algérien</option>
+                <option value="EUR">EUR — Euro</option>
+                <option value="MAD">MAD — Dirham marocain</option>
+                <option value="TND">TND — Dinar tunisien</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label class="form-label">TVA (%)</label>
+              <input class="input" id="set-tva" type="number" min="0" max="100" step="0.5">
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Pied de ticket</label>
+            <input class="input" id="set-footer" placeholder="Merci de votre visite!">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Nombre de tables</label>
+            <input class="input" id="set-tables" type="number" min="1" max="100">
+          </div>
+        </div>
+
+        <div class="data-table-wrap" style="padding:24px;border-radius:var(--radius-lg);margin-bottom:20px">
+          <h3 style="font-family:var(--font-display);font-size:1rem;font-weight:700;margin-bottom:20px;color:var(--text-primary)">
+            🔧 Options
+          </h3>
+          <div style="display:flex;flex-direction:column;gap:14px">
+            <label style="display:flex;align-items:center;justify-content:space-between;cursor:pointer">
+              <span style="font-family:var(--font-display);font-weight:600;color:var(--text-secondary)">🔊 Sons activés</span>
+              <input type="checkbox" id="set-sound" style="width:18px;height:18px;accent-color:var(--amber);cursor:pointer">
+            </label>
+            <label style="display:flex;align-items:center;justify-content:space-between;cursor:pointer">
+              <span style="font-family:var(--font-display);font-weight:600;color:var(--text-secondary)">👆 Mode geste</span>
+              <input type="checkbox" id="set-gesture" style="width:18px;height:18px;accent-color:var(--amber);cursor:pointer">
+            </label>
+            <label style="display:flex;align-items:center;justify-content:space-between;cursor:pointer">
+              <span style="font-family:var(--font-display);font-weight:600;color:var(--text-secondary)">🖨 Impression automatique</span>
+              <input type="checkbox" id="set-printer" style="width:18px;height:18px;accent-color:var(--amber);cursor:pointer">
+            </label>
+          </div>
+        </div>
+
+        <div style="display:flex;gap:12px">
+          <button class="btn btn-primary btn-lg" onclick="saveSettings()">💾 Enregistrer</button>
+          <button class="btn btn-danger btn-sm" onclick="resetDatabase()">⚠ Réinitialiser</button>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /manager-main -->
+
+</div><!-- /manager-app -->
+
+<div id="toast-container"></div>
+
+<script src="js/db.js"></script>
+<script src="js/app.js"></script>
+<script src="js/manager.js"></script>
+</body>
+</html>
