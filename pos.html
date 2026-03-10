@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>R.Lynx™ RestFast — Caisse PDV</title>
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/pos.css">
+</head>
+<body>
+
+<div id="pos-app">
+
+  <!-- ═══ TOP BAR ═══ -->
+  <header id="pos-topbar">
+    <div class="topbar-logo">
+      <div class="logo-icon">RL</div>
+      <div class="logo-text">Rest<span>Fast</span></div>
+    </div>
+
+    <div id="topbar-clock">00:00:00</div>
+
+    <div id="topbar-table-info" style="display:none">🪑 —</div>
+
+    <div class="topbar-sep"></div>
+
+    <div id="topbar-cashier">
+      <span>👤</span>
+      <span class="name" id="topbar-cashier-name">—</span>
+    </div>
+
+    <button class="btn btn-ghost btn-sm" id="btn-select-table" title="Sélectionner une table">
+      🪑 Table
+    </button>
+
+    <button class="btn btn-ghost btn-sm" id="btn-logout" title="Déconnexion">
+      ⏏ Quitter
+    </button>
+  </header>
+
+  <!-- ═══ MENU PANEL ═══ -->
+  <main id="pos-menu">
+
+    <!-- Category tabs -->
+    <div id="category-bar">
+      <!-- Rendered by JS -->
+    </div>
+
+    <!-- Search -->
+    <div id="menu-search-bar">
+      <div class="search-wrapper">
+        <span class="search-icon">🔍</span>
+        <input type="text" class="input" id="menu-search" placeholder="Rechercher un article...">
+      </div>
+    </div>
+
+    <!-- Items grid -->
+    <div id="items-grid">
+      <!-- Rendered by JS -->
+    </div>
+
+  </main>
+
+  <!-- ═══ CART / ORDER ═══ -->
+  <aside id="pos-cart">
+
+    <!-- Cart header -->
+    <div id="cart-header">
+      <div class="cart-title">🧾 Commande</div>
+      <div class="cart-order-num" id="cart-order-num">#—</div>
+    </div>
+
+    <!-- Cart items -->
+    <div id="cart-items">
+      <!-- Items rendered by JS -->
+    </div>
+
+    <!-- Empty state -->
+    <div class="cart-empty" id="cart-empty-state">
+      <div class="empty-icon">🛒</div>
+      <p>Sélectionnez une table puis<br>ajoutez des articles</p>
+      <button class="btn btn-secondary btn-sm" id="btn-new-order">
+        🪑 Choisir une table
+      </button>
+    </div>
+
+    <!-- Cart footer: summary + actions -->
+    <div id="cart-footer" style="display:none">
+      <div class="cart-summary">
+        <div class="summary-row">
+          <span class="label">Sous-total</span>
+          <span class="value" id="summary-subtotal">0 DZD</span>
+        </div>
+        <div class="summary-row">
+          <span class="label" id="summary-tva-label">TVA (9%)</span>
+          <span class="value" id="summary-tva">0 DZD</span>
+        </div>
+        <div class="summary-row total">
+          <span class="label">TOTAL</span>
+          <span class="value" id="summary-total">0 DZD</span>
+        </div>
+      </div>
+
+      <div class="cart-actions">
+        <button class="btn btn-ghost btn-sm" id="btn-clear-cart">🗑 Vider</button>
+        <button class="btn btn-secondary btn-sm" id="btn-note" onclick="Toast.show('Fonctionnalité bientôt disponible','info')">
+          📝 Note
+        </button>
+        <button class="btn btn-primary btn-lg btn-pay" id="btn-pay" disabled>
+          💳 Payer
+        </button>
+      </div>
+    </div>
+
+  </aside>
+
+</div>
+
+<!-- Task panel toggle -->
+<button id="task-panel-toggle">▲ TÂCHES</button>
+
+<!-- Task panel (open orders) -->
+<div id="task-panel"></div>
+
+<!-- Toast container -->
+<div id="toast-container"></div>
+
+<script src="js/db.js"></script>
+<script src="js/app.js"></script>
+<script src="js/pos.js"></script>
+</body>
+</html>
