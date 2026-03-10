@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>R.Lynx™ RestFast — Connexion</title>
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/login.css">
+</head>
+<body class="login-page">
+
+  <!-- Animated background -->
+  <div class="login-bg">
+    <div class="grid-overlay"></div>
+  </div>
+
+  <!-- Login box -->
+  <div class="login-container">
+    <div class="login-card">
+
+      <!-- Header -->
+      <div class="login-header">
+        <div class="login-logo">RL</div>
+        <div class="login-title">R.Lynx™ <span>RestFast</span></div>
+        <div class="login-subtitle">Point de Vente & Gestion Restaurant</div>
+      </div>
+
+      <!-- Role selector -->
+      <div style="margin-bottom:20px">
+        <div style="font-family:var(--font-display);font-size:0.75rem;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--text-muted);margin-bottom:10px">
+          Accès
+        </div>
+        <div class="role-selector">
+          <div class="role-btn active" data-role="cashier" id="role-cashier">
+            <div class="role-icon">🖥</div>
+            <div class="role-name">Caisse (PDV)</div>
+          </div>
+          <div class="role-btn" data-role="manager" id="role-manager">
+            <div class="role-icon">📊</div>
+            <div class="role-name">Manager</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Form -->
+      <div class="login-form">
+        <div class="input-group">
+          <span class="input-icon">👤</span>
+          <input type="text" class="input" id="username" placeholder="Identifiant"
+                 autocomplete="username" autofocus>
+        </div>
+        <div class="input-group">
+          <span class="input-icon">🔑</span>
+          <input type="password" class="input" id="password" placeholder="Mot de passe"
+                 autocomplete="current-password" id="password">
+        </div>
+
+        <div id="login-error" class="hidden"
+             style="padding:10px 14px;background:rgba(239,68,68,0.1);border:1px solid rgba(239,68,68,0.3);
+                    border-radius:var(--radius);font-size:0.85rem;color:var(--red);text-align:center">
+          Identifiant ou mot de passe incorrect
+        </div>
+
+        <button class="btn btn-primary btn-lg login-btn" id="btn-login">
+          Se connecter
+        </button>
+      </div>
+
+      <!-- Demo hint -->
+      <div style="margin-top:20px;padding:12px 16px;background:var(--amber-glow-sm);border:1px solid var(--border-amber);
+                  border-radius:var(--radius);font-size:0.8rem;color:var(--text-secondary);font-family:var(--font-mono)">
+        <span style="color:var(--amber)">DÉMO</span> &nbsp;
+        Manager: <strong>admin / 1234</strong> &nbsp;|&nbsp;
+        Caisse: <strong>caisse1 / 1111</strong>
+      </div>
+    </div>
+
+    <!-- Footer -->
+    <div class="login-footer">
+      <span>R.Lynx™ RestFast</span>
+      <div class="dot"></div>
+      <span>v3.0</span>
+      <div class="dot"></div>
+      <span>© 2024</span>
+    </div>
+  </div>
+
+  <div id="toast-container"></div>
+
+  <script src="js/db.js"></script>
+  <script src="js/app.js"></script>
+  <script>
+    // Role selection
+    let selectedRole = 'cashier';
+    document.querySelectorAll('.role-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        selectedRole = btn.dataset.role;
+        document.querySelectorAll('.role-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+      });
+    });
+
+    // Login
+    const doLogin = () => {
+      const username = document.getElementById('username').value.trim();
+      const password = document.getElementById('password').value;
+      const errEl = document.getElementById('login-error');
+      errEl.classList.add('hidden');
+
+      if (!username || !password) {
+        errEl.textContent = 'Veuillez remplir tous les champs';
+        errEl.classList.remove('hidden');
+        return;
+      }
+
+      const session = Auth.login(username, password);
+      if (!session) {
+        errEl.textContent = 'Identifiant ou mot de passe incorrect';
+        errEl.classList.remove('hidden');
+        document.getElementById('password').value = '';
+        return;
+      }
+
+      // Role check vs selected
+      if (selectedRole === 'manager' && session.role !== 'manager') {
+        errEl.textContent = 'Accès manager non autorisé pour ce compte';
+        errEl.classList.remove('hidden');
+        return;
+      }
+
+      // Redirect
+      if (session.role === 'manager') {
+        window.location.href = 'manager.html';
+      } else {
+        window.location.href = 'pos.html';
+      }
+    };
+
+    document.getElementById('btn-login').addEventListener('click', doLogin);
+    document.getElementById('password').addEventListener('keydown', e => {
+      if (e.key === 'Enter') doLogin();
+    });
+    document.getElementById('username').addEventListener('keydown', e => {
+      if (e.key === 'Enter') document.getElementById('password').focus();
+    });
+  </script>
+</body>
+</html>
